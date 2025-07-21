@@ -1,11 +1,13 @@
 package com.example.gcashtrainingspringboot.controller;
 
+import com.example.gcashtrainingspringboot.dto.ProductRequest;
 import com.example.gcashtrainingspringboot.model.Product;
 import com.example.gcashtrainingspringboot.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -31,19 +33,31 @@ class ProductControllerTest {
 
     @Test
     void testGetAllProducts() throws Exception{
-       List<Product> mockProducts = Arrays.asList(
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").ascending());
+
+        List<Product> allProducts = Arrays.asList(
+                new Product(1L, "Keyboard", 150.0),
+                new Product(2L, "Mouse", 50.0),
+                new Product(3L, "Monitor", 200.0),
+                new Product(4L, "Mouse", 220.0)
+        );
+
+        List<Product> mockProductsForPage = Arrays.asList(
                new Product(1L, "Keyboard", 150.0),
                new Product(2L, "Mouse", 50.0)
-       );
+        );
 
-       when(productService.findAllProducts()).thenReturn(mockProducts);
+       Page<Product> mockPageProducts = new PageImpl<>(mockProductsForPage, pageable, allProducts.size());
 
-       mockMvc.perform(get("/products"))
+       when(productService.findAllProducts(pageable)).thenReturn(mockPageProducts);
+
+
+        mockMvc.perform(get("/products").param("pageNumber", "0").param("pageSize", "2"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Keyboard"))
-                .andExpect(jsonPath("$[1].price").value(50.0));
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content.[0].name").value("Keyboard"))
+                .andExpect(jsonPath("$.content.[0].price").value("150.0"));
 
     }
 

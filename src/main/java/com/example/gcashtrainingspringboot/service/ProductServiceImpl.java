@@ -1,7 +1,11 @@
 package com.example.gcashtrainingspringboot.service;
 
+import com.example.gcashtrainingspringboot.dto.ProductRequest;
 import com.example.gcashtrainingspringboot.model.Product;
 import com.example.gcashtrainingspringboot.repository.ProductRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,14 +14,16 @@ import java.util.Optional;
 @Service
 public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
+    private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMap) {
         this.productRepository = productRepository;
+        this.modelMapper = modelMap;
     }
 
     @Override
-    public List<Product> findAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> findAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     @Override
@@ -70,4 +76,18 @@ public class ProductServiceImpl implements ProductService{
         return false;
 
     }
+
+    @Override
+    public Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable) {
+        Page<Product> productsFiltered;
+        if (name != null) {
+            productsFiltered = productRepository.findByNameContainingIgnoreCase(name, pageable);
+        } else {
+            productsFiltered = productRepository.findAll(pageable);
+        }
+
+        return productsFiltered;
+    }
+
+
 }
