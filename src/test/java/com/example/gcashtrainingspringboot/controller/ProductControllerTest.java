@@ -1,29 +1,30 @@
 package com.example.gcashtrainingspringboot.controller;
 
-import com.example.gcashtrainingspringboot.dto.ProductRequest;
+import com.example.gcashtrainingspringboot.config.MainConfiguration;
 import com.example.gcashtrainingspringboot.model.Product;
 import com.example.gcashtrainingspringboot.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.assertj.MockMvcTester;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductController.class)
+@WebMvcTest({ProductController.class, MainConfiguration.class})
 class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -51,13 +52,12 @@ class ProductControllerTest {
 
        when(productService.findAllProducts(pageable)).thenReturn(mockPageProducts);
 
-
-        mockMvc.perform(get("/products").param("pageNumber", "0").param("pageSize", "2"))
+        mockMvc.perform(get("/products").param("page", "0").param("size", "2"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content.length()").value(2))
-                .andExpect(jsonPath("$.content.[0].name").value("Keyboard"))
-                .andExpect(jsonPath("$.content.[0].price").value("150.0"));
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].name").value("Keyboard"))
+                .andExpect(jsonPath("$[0].price").value("150.0"));
 
     }
 

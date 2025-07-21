@@ -1,24 +1,19 @@
 package com.example.gcashtrainingspringboot.service;
 
-import com.example.gcashtrainingspringboot.dto.ProductRequest;
 import com.example.gcashtrainingspringboot.model.Product;
 import com.example.gcashtrainingspringboot.repository.ProductRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
-    private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMap) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.modelMapper = modelMap;
     }
 
     @Override

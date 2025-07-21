@@ -34,7 +34,7 @@ public class ProductController {
     @GetMapping
     public List<ProductResponse> getAll(
             @RequestParam int page,
-            @RequestParam int size,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
             @RequestParam(value = "sortBy", required = false, defaultValue = "asc") String sortBy
             ){
         Pageable pageable;
@@ -87,8 +87,8 @@ public class ProductController {
 
     @GetMapping("/search")
     public Page<Product> productSearch(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
             @RequestParam(value = "sortBy", required = false, defaultValue = "asc") String sortBy,
             @RequestParam(value = "searchKeyword", required = false) String searchKeyword) {
         Pageable pageable;
