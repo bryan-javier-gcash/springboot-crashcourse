@@ -1,11 +1,9 @@
 package com.example.gcashtrainingspringboot.service;
 
-import com.example.gcashtrainingspringboot.dto.ProductRequest;
 import com.example.gcashtrainingspringboot.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
